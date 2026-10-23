@@ -1,15 +1,32 @@
-# Personal learning context, kept out of commits by default
-/devpost/learner-profile.md
-
-# Credentials (a secret-free .env.example is fine)
+# Secrets: every env file except the blank template
 .env
 .env.*
 !.env.example
+*.pem
+*.key
 
-# App build output and dependencies
-app/node_modules
-app/.next
-app/.vercel
-app/*.tsbuildinfo
-app/next-env.d.ts
-node_modules
+# Personal learning context (Devpost Learn rule)
+/devpost/learner-profile.md
+
+# AI agent and editor local files
+.claude/
+CLAUDE.local.md
+.cursor/
+.vscode/
+.idea/
+
+# Shell and tool history, logs
+.*_history
+*.log
+npm-debug.log*
+
+# OS clutter
+.DS_Store
+Thumbs.db
+
+# Dependencies and build output
+node_modules/
+.next/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
