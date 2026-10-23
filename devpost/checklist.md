@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: Type the gold line in demo mode and read the receipt.
   Commit: `Enforce hold steady in code`
 
-- [ ] **4. A public link cannot drain the key**
+- [x] **4. A public link cannot drain the key**
   Becomes usable: Repeated requests from one IP are throttled on `/api/read`, and the page says to slow down.
   Why now: Required before the live URL exists.
   PRD ref: `prd.md > States and Boundaries`
@@ -87,3 +87,4 @@ Activity mode:
 - Live test found Nemotron 3.5 reasoning by default and spending the token budget before any JSON, so every reading fell back to the template. Thinking switched off for the reading call (chat_template_kwargs), think blocks stripped, failures now log finish_reason. Readings then returned in 1.0 to 1.8 s.
 - Live test found the model writing its own hold cue ("hoped for gold") instead of the receipt's declined line. The route now writes the declined line in model mode too.
 - Verified live on Oct 23: photo read by Nemotron (it described a white circle in the upper right, which the palette alone cannot reveal); gold request held; medication question returned a decision note.
+- Rate limit verified live Oct 23: requests 1 to 10 reached the app, 11 and 12 returned 429 from the firewall, and the page showed "Too many readings in a row. Give it a minute and try again." Tested with empty requests so no model call was spent.
