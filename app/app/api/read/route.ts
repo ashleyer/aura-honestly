@@ -60,6 +60,16 @@ export async function POST(req: Request) {
     if (holdActive(hold)) {
       if (hold.hopedColors.length && palette.length >= 2) reading.colors = palette.slice(0, 3);
       if (!reading.holdNote) reading.holdNote = holdNote(hold, palette.length ? reading.colors : []);
+      // The receipt line is the app's statement, not the model's, so it is written here in every mode.
+      const declined = [
+        ...hold.hopedColors.map((c) => `declined: your hoped-for ${c}`),
+        ...hold.insults.map((i) => `declined: "${i}"`),
+      ];
+      const hoped = new Set([...hold.hopedColors, ...hold.insults]);
+      reading.cues = [
+        ...reading.cues.filter((c) => ![...hoped].some((h) => c.toLowerCase().includes(h))),
+        ...declined,
+      ].slice(0, 6);
     }
     return json({ ...reading, mode: "model", provider: providerLabel(provider) } satisfies Reading);
   } catch (err) {
