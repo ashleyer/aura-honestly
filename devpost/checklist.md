@@ -49,7 +49,7 @@ Build mode: fast
   Learner check: Hammer the button and confirm the app says to slow down rather than erroring.
   Commit: `Handle rate-limit responses in the UI`
 
-- [ ] **5. The app reads with Nemotron on Nebius**
+- [x] **5. The app reads with Nemotron on Nebius**
   Becomes usable: A live Vercel URL answers with `provider: nvidia/Nemotron-3.5-Super-VL` on the receipt.
   Why now: One deploy serves both contests.
   PRD ref: `prd.md > Providers`
@@ -84,3 +84,6 @@ Activity mode:
 
 - Hold steady moved from prompt instruction to code enforcement — the keyless demo path could echo a hoped-for color back as evidence, contradicting the product's core claim.
 - Rate limiting set to a Vercel WAF rule on the Hobby plan; UI now handles the firewall's non-JSON 429.
+- Live test found Nemotron 3.5 reasoning by default and spending the token budget before any JSON, so every reading fell back to the template. Thinking switched off for the reading call (chat_template_kwargs), think blocks stripped, failures now log finish_reason. Readings then returned in 1.0 to 1.8 s.
+- Live test found the model writing its own hold cue ("hoped for gold") instead of the receipt's declined line. The route now writes the declined line in model mode too.
+- Verified live on Oct 23: photo read by Nemotron (it described a white circle in the upper right, which the palette alone cannot reveal); gold request held; medication question returned a decision note.
