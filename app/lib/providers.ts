@@ -71,20 +71,49 @@ async function callOpenAICompatible(input: ModelInput): Promise<string> {
       image_url: { url: `data:${input.image.mediaType};base64,${input.image.base64}` },
     });
   }
-  const data = await post(
-    `${base}/chat/completions`,
-    { authorization: `Bearer ${process.env.OPENAI_COMPAT_API_KEY || ""}` },
-    {
-      model: process.env.OPENAI_COMPAT_MODEL,
-      temperature: 0,
-      max_tokens: 900,
-      messages: [
-        { role: "system", content: input.system },
-        { role: "user", content: userContent },
-      ],
-    },
+  const url = `${base}/chat/completions`;
+  const auth = { authorization: `Bearer ${process.env.OPENAI_COMPAT_API_KEY || ""}` };
+  const body: Record<string, unknown> = {
+    model: process.env.OPENAI_COMPAT_MODEL,
+    temperature: 0,
+    max_tokens: 1500,
+    messages: [
+      { role: "system", content: input.system },
+      { role: "user", content: userContent },
+    ],
+    // Reasoning models (Nemotron 3.x and similar) think before answering by default, and the
+    // thinking spends the output budget before any JSON appears. This app needs a short structured
+    // answer fast, so thinking is switched off. Servers that don't know the flag get one retry without it.
+    chat_template_kwargs: { enable_thinking: false },
+  };
+
+  let data: any;
+  try {
+    data = await post(url, auth, body);
+  } catch (err) {
+    if (!(err instanceof Error && /Provider returned 4(00|22)/.test(err.message))) throw err;
+    delete body.chat_template_kwargs;
+    data = await post(url, auth, body);
+  }
+
+  const choice = data.choices?.[0] ?? {};
+  const msg = choice.message ?? {};
+  const content = stripThinking(typeof msg.content === "string" ? msg.content : "");
+  if (content.includes("{")) return content;
+
+  // Some servers put the whole answer in a separate reasoning field when content comes back empty.
+  const reasoning = stripThinking(String(msg.reasoning_content ?? msg.reasoning ?? ""));
+  if (reasoning.includes("{")) return reasoning;
+
+  // Say why, without echoing model text or anything secret, so the log is diagnosable.
+  throw new Error(
+    `No JSON in model reply (finish_reason=${choice.finish_reason ?? "none"}, content=${content.length} chars, reasoning=${reasoning.length} chars)`,
   );
-  return data.choices?.[0]?.message?.content ?? "";
+}
+
+/** Remove <think>...</think> blocks, including an unclosed one cut off by the token limit. */
+export function stripThinking(text: string): string {
+  return text.replace(/<think>[\s\S]*?(<\/think>|$)/g, "").trim();
 }
 
 export async function callModel(provider: ProviderName, input: ModelInput): Promise<string> {

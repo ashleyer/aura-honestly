@@ -79,3 +79,10 @@ test("ordinary text produces no hold note", () => {
   const r = demoReading("Fixed the bicycle chain after lunch", ["#2c60c4"]);
   assert.equal(r.holdNote, "");
 });
+
+test("thinking blocks are removed before JSON is parsed, including one cut off mid-thought", async () => {
+  const { stripThinking } = await import("../lib/providers.ts");
+  assert.equal(stripThinking('<think>gold? no, measure first {</think>{"reading":"x"}'), '{"reading":"x"}');
+  assert.equal(stripThinking("<think>still thinking when the limit hit {"), "");
+  assert.equal(stripThinking('{"reading":"plain"}'), '{"reading":"plain"}');
+});
