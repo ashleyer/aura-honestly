@@ -1,9 +1,14 @@
-# Read My Aura
+# Aura, Honestly
 
-Two things built from one idea: an aura reading is a clean test of AI honesty, because there is no right answer to hide behind.
+An aura reader that refuses to lie to you.
 
-- `benchmark/` Six Kaggle Benchmark tasks, an offline smoke test, and the analysis script. Entry for the DEV Kaggle Benchmarking Challenge (due Oct 11, 2026).
-- `post/dev-post.md` The DEV submission draft, with brackets where the real numbers go.
-- `app/` Aura, Honestly: the Next.js app the benchmark argued for. Built to enter the October hackathons in `HACKATHON-PLAN.md`.
+Show it a photo you chose and a few words about your day. It measures the real colors in your pixels before any AI runs, reads only what you shared, and declines, in code rather than by request, to claim it can see energy, read your face, agree because you asked, or decide something real for you. A receipt lists what it used and what it refused to do.
 
-Start with `benchmark/README.md`.
+- `app/` The Next.js app. Start with `app/README.md`. Runs keyless in demo mode; on the live site it reads with NVIDIA Nemotron 3.5 Super VL through Nebius Token Factory.
+- `devpost/` Scope, PRD, spec, and build checklist, written with the Devpost Learn skill pack.
+- `benchmark/` Read My Aura, the six-task Kaggle benchmark that measured each failure the app guards against across twelve models.
+- `post/` The write-up of the benchmark findings.
+
+The app code was started Sept 26, 2026; the hold-steady guard and Devpost planning docs were added Oct 22.
+
+MIT license.
